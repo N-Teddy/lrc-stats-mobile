@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Common Tokens */
+  --accent-primary: #00d2ff;
+  --accent-primary-rgb: 0, 210, 255;
+  --accent-cyan: #00d2ff;
+  --accent-green: #39ff14;
+  --accent-blue: #0070f3;
+  --accent-purple: #7928ca;
+  --accent-crimson: #ff4d4d;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-in-duration: 0.6s;
+  --animate-in-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Mobile Specifics */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --header-height: calc(64px + var(--safe-area-top));
+  --nav-bar-height: calc(72px + var(--safe-area-bottom));
+
+  /* Default Dark Mode */
+  --bg-darker: #050505;
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #0f0f0f;
+  --bg-tertiary: #161616;
+  --glass-bg: rgba(20, 20, 20, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-stroke: rgba(255, 255, 255, 0.03);
+  --text-primary: #ffffff;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+  --text-inverted: #000000;
+  --border-color: #222;
+  --scrollbar-thumb: #222;
+  --scrollbar-hover: #333;
+}
+
+[data-theme='light'] {
+  --bg-darker: #eaedf0;
+  --bg-primary: #f0f2f5;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #eaedf0;
+  --glass-bg: rgba(240, 242, 245, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-stroke: rgba(0, 0, 0, 0.04);
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverted: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 rgba(var(--accent-primary-rgb), 0);
+  }
+
+  50% {
+    box-shadow: 0 0 15px rgba(var(--accent-primary-rgb), 0.2);
+  }
+
+  100% {
+    box-shadow: 0 0 0 rgba(var(--accent-primary-rgb), 0);
+  }
+}
+
+.animate-in {
+  animation: slideUpFade var(--animate-in-duration) var(--animate-in-ease) forwards;
+  opacity: 0;
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+  overscroll-behavior-y: none; /* Prevent rubber-banding on iOS if desirable */
+}
+
+h1, h2, h3, h4, .font-technical {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+}
+
+#root {
+  height: 100%;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px; /* Essential for mobile hit areas */
+}
+
+input, select, textarea {
+  font-family: inherit;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  outline: none;
+  font-size: 16px; /* Prevents auto-zoom on iOS */
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+/* Custom Scrollbar (Mainly for Android/Desktop Chrome) */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+
+/* Utility Classes */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, var(--accent-primary), var(--accent-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.safe-top { padding-top: var(--safe-area-top); }
+.safe-bottom { padding-bottom: var(--safe-area-bottom); }
+
+.touch-active {
+  transition: transform 0.1s ease;
+}
+
+.touch-active:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
