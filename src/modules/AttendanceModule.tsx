@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Search, Check, ShieldCheck, Lock, Unlock, Users } from 'lucide-react';
+import { ArrowLeft, Search, Check, ShieldCheck, Users } from 'lucide-react';
 import { dataService, Person, AttendanceRecord } from '../store/dataService';
 import { notificationService } from '../store/notificationService';
 import { useTranslation } from 'react-i18next';

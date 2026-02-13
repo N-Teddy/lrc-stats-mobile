@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
     Brain,
     TrendingUp,
@@ -7,7 +6,6 @@ import {
     ShieldCheck,
     Download,
     Filter,
-    ChevronRight,
     BarChart3,
     Calendar,
     Share2,

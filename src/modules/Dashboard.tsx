@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Calendar, Activity, Zap, Clock, Cake, Gift, Bell } from 'lucide-react';
+import { Users, Calendar, Activity, Zap, Clock, Cake, Bell } from 'lucide-react';
 import { dataService, Person, Activity as ActivityType, AttendanceRecord } from '../store/dataService';
 import { useTheme } from '../store/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             {/* Engagement Graph */}
-            <FluidCard padding="20px" marginBottom="25px" delay={0.5}>
+            <FluidCard padding="20px" style={{ marginBottom: '25px' }} delay={0.5}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <h3 className="font-technical" style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '1px' }}>
                         {t('dashboard.engagement_title').toUpperCase()}

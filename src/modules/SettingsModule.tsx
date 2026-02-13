@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Cloud, Save, Download, Upload, Trash2, Shield, ChevronRight, Palette, Globe, RefreshCcw, Info } from 'lucide-react';
+import { Cloud, Save, Download, Upload, Trash2, ChevronRight, Palette, Globe, RefreshCcw, Info } from 'lucide-react';
 import { useTheme, ACCENTS } from '../store/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { syncService } from '../store/syncService';

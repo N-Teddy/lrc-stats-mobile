@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowLeft, User, Phone, Calendar, Clock, TrendingUp, Activity, Award, Mail, MapPin, Edit3 } from 'lucide-react';
+import { ArrowLeft, User, Phone, Calendar, Clock, TrendingUp, Activity, Award, Edit3 } from 'lucide-react';
 import { dataService, Person } from '../store/dataService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../store/ThemeContext';
@@ -211,7 +211,7 @@ const PersonDetailModule: React.FC<PersonDetailModuleProps> = ({ personId, onBac
                 </div>
 
                 {/* Information Card */}
-                <FluidCard padding="25px" marginBottom="25px">
+                <FluidCard padding="25px" style={{ marginBottom: '25px' }}>
                     <h3 className="font-technical" style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '1px', marginBottom: '20px', color: 'var(--text-muted)' }}>
                         DOSSIER CORE
                     </h3>
