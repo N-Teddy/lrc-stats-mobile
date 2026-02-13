@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { dataService, Person, Activity, AttendanceRecord } from './dataService';
-import { auditService, AuditLogEntry } from './auditService';
+import { dataService } from './dataService';
+import { auditService } from './auditService';
 
 /**
  * Cloud Sync Service for Supabase Integration

@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { dataService, getActivityTypeKey, Person, Activity, AttendanceRecord } from './dataService';
+import { dataService, getActivityTypeKey, Person, Activity } from './dataService';
 import { notificationService } from './notificationService';
 import i18n from '../i18n/config';
 
@@ -20,7 +20,7 @@ const calculateEngagement = (attendanceCount: number, activityCount: number): st
     return 'inactive';
 };
 
-const t = (key: string, options?: any) => i18n.t(key, options);
+const t = (key: string, options?: any) => i18n.t(key, options) as string;
 
 export interface YearlyReportConfig {
     years: string[];
@@ -108,9 +108,9 @@ export const reportService = {
                 doc.text(t('reports.audit_cycle', { year }), 14, currentY);
 
                 const columns = [
-                    { header: t('reports.asset_name'), dataKey: 'name' },
+                    { header: t('reports.asset_name') as string, dataKey: 'name' },
                     ...filteredActivities.map(a => ({ header: a.date.substring(5, 10), dataKey: a.id })),
-                    { header: t('reports.total'), dataKey: 'total' }
+                    { header: t('reports.total') as string, dataKey: 'total' }
                 ];
 
                 autoTable(doc, {

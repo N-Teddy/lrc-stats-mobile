@@ -1,4 +1,4 @@
-import { dataService, Person, Activity, AttendanceRecord } from './dataService';
+import { dataService, Person } from './dataService';
 
 /**
  * Intelligence Service for Personnel Vitality and Community Insights

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Phone, Calendar, Clock, TrendingUp, Activity, Download, Award, Zap } from 'lucide-react';
-import { dataService, Person, AttendanceRecord, Activity as ActivityType } from '../store/dataService';
-import { reportService } from '../store/reportService';
+import { ArrowLeft, User, Phone, Calendar, Clock, TrendingUp, Activity, Award } from 'lucide-react';
+import { dataService, Person } from '../store/dataService';
 import { useTranslation } from 'react-i18next';
-import { AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTheme } from '../store/ThemeContext';
 
 interface PersonDetailModuleProps {

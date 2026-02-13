@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Calendar, ChevronRight, Lock, Unlock, CheckCircle2, Users, Mic2, HeartPulse, Gamepad2, Home, MoreHorizontal } from 'lucide-react';
-import { dataService, Activity as ActivityType, AttendanceRecord, ACTIVITY_TYPES, getActivityTypeKey } from '../store/dataService';
+import { Plus, Search, ChevronRight, Lock, Unlock, CheckCircle2, Users, Mic2, HeartPulse, Gamepad2, Home, MoreHorizontal } from 'lucide-react';
+import { dataService, Activity as ActivityType, AttendanceRecord, getActivityTypeKey } from '../store/dataService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../store/ThemeContext';
 
@@ -15,10 +15,9 @@ const TYPE_CONFIG: any = {
 
 interface ActivitiesModuleProps {
     onTrackAttendance: (activity: ActivityType) => void;
-    onAnalyzeActivity: (activity: ActivityType) => void;
 }
 
-const ActivitiesModule: React.FC<ActivitiesModuleProps> = ({ onTrackAttendance, onAnalyzeActivity }) => {
+const ActivitiesModule: React.FC<ActivitiesModuleProps> = ({ onTrackAttendance }) => {
     const { t } = useTranslation();
     const { accentColor } = useTheme();
     const [activities, setActivities] = useState<ActivityType[]>([]);
@@ -116,7 +115,7 @@ const ActivitiesModule: React.FC<ActivitiesModuleProps> = ({ onTrackAttendance, 
             </div>
 
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {filtered.map((activity, idx) => {
+                {filtered.map((activity) => {
                     const attRecord = attendance.find(att => att.activityId === activity.id);
                     const isLocked = attRecord?.isLocked || false;
                     const isRecorded = !!attRecord;

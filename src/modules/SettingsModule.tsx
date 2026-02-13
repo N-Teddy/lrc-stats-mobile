@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Settings as SettingsIcon, Cloud, Save, Download, Upload, Trash2, Bell, Palette, Languages, Shield, ChevronRight } from 'lucide-react';
+import { Cloud, Save, Download, Upload, Trash2, Shield, ChevronRight } from 'lucide-react';
 import { useTheme, ACCENTS } from '../store/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { syncService } from '../store/syncService';
-import { devService } from '../store/devService';
 import { notificationService } from '../store/notificationService';
 
 const SettingsModule: React.FC = () => {
@@ -23,7 +22,6 @@ const SettingsModule: React.FC = () => {
         }
     };
 
-    const isSandbox = localStorage.getItem('lrc_operation_mode') === 'SANDBOX';
 
     return (
         <div className="animate-in" style={{ padding: '0 0 40px 0' }}>

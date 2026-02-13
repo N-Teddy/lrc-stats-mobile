@@ -1,6 +1,6 @@
 import { writeTextFile, exists, mkdir, remove, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { v4 as uuidv4 } from 'uuid';
-import { Person, Activity, AttendanceRecord } from './dataService';
+import { Person, AttendanceRecord } from './dataService';
 
 /**
  * Dev Service for internal seeding and sandbox management - Mobile Edition

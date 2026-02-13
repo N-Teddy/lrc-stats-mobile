@@ -11,6 +11,7 @@
     - [x] Port `intelligenceService.ts` (Vitality forecasting).
     - [x] Port `ThemeContext.tsx` (Lab Mode & Accents).
     - [x] Setup i18n Protocol (EN/FR parity).
+    - [x] Setup CI/CD (GitHub Actions) for Android builds.
 
 - [x] **M2.1: Navigation**
     - [x] Implement Tactical Bottom Navigation Bar.

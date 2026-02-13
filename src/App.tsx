@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import BaseLayout from "./components/BaseLayout";
 import Dashboard from "./modules/Dashboard";
 import PeopleModule from "./modules/PeopleModule";
@@ -6,7 +6,6 @@ import PersonDetailModule from "./modules/PersonDetailModule";
 import ActivitiesModule from "./modules/ActivitiesModule";
 import AttendanceModule from "./modules/AttendanceModule";
 import SettingsModule from "./modules/SettingsModule";
-import { useTranslation } from "react-i18next";
 import { notificationService } from "./store/notificationService";
 import { dataService } from "./store/dataService";
 import { syncService } from "./store/syncService";
@@ -14,7 +13,6 @@ import { syncService } from "./store/syncService";
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [viewState, setViewState] = useState<{ type: 'list' | 'detail' | 'track' | 'analyze', id?: string, data?: any }>({ type: 'list' });
-  const { t } = useTranslation();
 
   useEffect(() => {
     const initApp = async () => {
@@ -66,7 +64,6 @@ function App() {
         return (
           <ActivitiesModule
             onTrackAttendance={(activity) => setViewState({ type: 'track', data: activity })}
-            onAnalyzeActivity={(activity) => setViewState({ type: 'analyze', data: activity })}
           />
         );
       case "settings":

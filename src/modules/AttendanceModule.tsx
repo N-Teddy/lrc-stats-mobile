@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Search, Save, Lock, Check } from 'lucide-react';
-import { dataService, Person, AttendanceRecord, getActivityTypeKey } from '../store/dataService';
+import { ArrowLeft, Search, Check } from 'lucide-react';
+import { dataService, Person, AttendanceRecord } from '../store/dataService';
 import { notificationService } from '../store/notificationService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../store/ThemeContext';
@@ -56,12 +56,14 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
             const otherAttendance = allAttendance.filter(a => a.activityId !== activity.id);
 
             const newEntry: AttendanceRecord = {
+                id: (allAttendance.find(a => a.activityId === activity.id) as any)?.id || activity.id,
                 activityId: activity.id,
                 activityName: activity.name,
                 date: activity.date,
                 personIds: Array.from(selectedIds),
                 count: selectedIds.size,
-                isLocked: shouldLock || isLocked
+                isLocked: shouldLock || isLocked,
+                updatedAt: new Date().toISOString()
             };
 
             await dataService.saveAttendance([...otherAttendance, newEntry]);

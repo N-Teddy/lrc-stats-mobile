@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Users, Calendar, Activity, Zap, Clock, Cake, Gift, ChevronRight } from 'lucide-react';
+import { Users, Calendar, Activity, Zap, Clock, Cake, Gift } from 'lucide-react';
 import { dataService, Person, Activity as ActivityType, AttendanceRecord } from '../store/dataService';
 import { useTheme } from '../store/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+    AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
 const StatCard = ({ icon: Icon, label, value, color, subtext }: any) => (
@@ -31,7 +31,6 @@ const Dashboard: React.FC = () => {
         membres: 0, eleves: 0, jrs: 0, total: 0, activitiesCount: 0, avgAttendance: 0,
         recentAttendance: [] as AttendanceRecord[], birthdays: [] as Person[], pendingAlerts: [] as ActivityType[]
     });
-    const [allData, setAllData] = useState({ people: [] as Person[] });
 
     useEffect(() => {
         loadDashboardData();
@@ -71,7 +70,6 @@ const Dashboard: React.FC = () => {
             birthdays: monthlyBirthdays,
             pendingAlerts
         });
-        setAllData({ people: activePeople });
     };
 
     const chartData = useMemo(() => {
@@ -148,8 +146,8 @@ const Dashboard: React.FC = () => {
             <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-lg)', marginBottom: '20px' }}>
                 <h3 className="font-technical" style={{ fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '15px' }}>{t('dashboard.recent_activity_hub').toUpperCase()}</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {stats.recentAttendance.length > 0 ? stats.recentAttendance.slice(-3).reverse().map((act, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--glass-border)' }}>
+                    {stats.recentAttendance.length > 0 ? stats.recentAttendance.slice(-3).reverse().map((act) => (
+                        <div key={act.activityId} style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--glass-border)' }}>
                             <div style={{ flex: 1 }}>
                                 <p style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{act.activityName}</p>
                                 <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{act.date}</p>
@@ -166,8 +164,8 @@ const Dashboard: React.FC = () => {
                     <Cake size={14} color="#ffaa00" />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {stats.birthdays.slice(0, 3).map((p, idx) => (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {stats.birthdays.slice(0, 3).map((p) => (
+                        <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <Gift size={14} color="var(--text-muted)" />
                             </div>

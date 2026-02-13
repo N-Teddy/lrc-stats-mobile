@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, UserPlus, MoreVertical, Edit2, Archive, Trash2, User, Phone, Zap, AlertTriangle, TrendingUp, Filter } from 'lucide-react';
-import { dataService, Person } from '../store/dataService';
+import { Search, UserPlus, User, Phone, AlertTriangle, TrendingUp, ChevronRight } from 'lucide-react';
 import { intelligenceService, VitalityRanking } from '../store/intelligenceService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../store/ThemeContext';
@@ -15,8 +14,7 @@ const PeopleModule: React.FC<PeopleModuleProps> = ({ onViewPerson }) => {
     const [rankings, setRankings] = useState<VitalityRanking[]>([]);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<'active' | 'jrs' | 'archived'>('active');
-    const [statusFilter, setStatusFilter] = useState<'all' | 'Membre' | 'Eleve'>('all');
-    const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+    const [statusFilter] = useState<'all' | 'Membre' | 'Eleve'>('all');
 
     useEffect(() => {
         loadPeople();
@@ -111,7 +109,7 @@ const PeopleModule: React.FC<PeopleModuleProps> = ({ onViewPerson }) => {
             </div>
 
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                {filtered.map((rank, idx) => {
+                {filtered.map((rank) => {
                     const p = rank.person;
                     const isVeryActive = rank.score >= 0.75;
                     const isActive = rank.score >= 0.4 && rank.score < 0.75;
