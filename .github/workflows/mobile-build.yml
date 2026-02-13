@@ -42,7 +42,7 @@ jobs:
         id: setup-android
 
       - name: build tauri android
-        run: pnpm tauri android build
+        run: pnpm tauri android build --release
         env:
           NDK_HOME: ${{ steps.setup-android.outputs.ndk-path }}
 
