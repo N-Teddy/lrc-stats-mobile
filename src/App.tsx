@@ -1,65 +1,85 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import BaseLayout from "./components/BaseLayout";
+import Dashboard from "./modules/Dashboard";
+import PeopleModule from "./modules/PeopleModule";
+import PersonDetailModule from "./modules/PersonDetailModule";
+import ActivitiesModule from "./modules/ActivitiesModule";
+import AttendanceModule from "./modules/AttendanceModule";
+import SettingsModule from "./modules/SettingsModule";
 import { useTranslation } from "react-i18next";
-import { useTheme } from "./store/ThemeContext";
+import { notificationService } from "./store/notificationService";
+import { dataService } from "./store/dataService";
+import { syncService } from "./store/syncService";
 
 function App() {
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [viewState, setViewState] = useState<{ type: 'list' | 'detail' | 'track' | 'analyze', id?: string, data?: any }>({ type: 'list' });
   const { t } = useTranslation();
-  const { theme, toggleTheme, accentColor } = useTheme();
+
+  useEffect(() => {
+    const initApp = async () => {
+      // 1. Init Notifications
+      const granted = await notificationService.init();
+      if (granted) {
+        const [people, activities, attendance] = await Promise.all([
+          dataService.getPeople(),
+          dataService.getActivities(),
+          dataService.getAttendance()
+        ]);
+        notificationService.checkBirthdays(people);
+        notificationService.checkUnlockedActivities(activities, attendance);
+      }
+
+      // 2. Auto-sync if configured
+      const url = import.meta.env.VITE_SUPABASE_URL || localStorage.getItem('lrc_supabase_url');
+      if (url) {
+        try {
+          await syncService.sync();
+        } catch (err) {
+          console.warn('Sync deferred:', err);
+        }
+      }
+    };
+
+    initApp();
+  }, []);
+
+  // Reset view state when switching tabs
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setViewState({ type: 'list' });
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "dashboard":
+        return <Dashboard />;
+      case "people":
+        if (viewState.type === 'detail' && viewState.id) {
+          return <PersonDetailModule personId={viewState.id} onBack={() => setViewState({ type: 'list' })} />;
+        }
+        return <PeopleModule onViewPerson={(id) => setViewState({ type: 'detail', id })} />;
+      case "activities":
+        if (viewState.type === 'track') {
+          return <AttendanceModule activity={viewState.data} onBack={() => setViewState({ type: 'list' })} />;
+        }
+        return (
+          <ActivitiesModule
+            onTrackAttendance={(activity) => setViewState({ type: 'track', data: activity })}
+            onAnalyzeActivity={(activity) => setViewState({ type: 'analyze', data: activity })}
+          />
+        );
+      case "settings":
+        return <SettingsModule />;
+      default:
+        return <Dashboard />;
+    }
+  };
 
   return (
-    <div className="safe-top safe-bottom" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <header className="glass" style={{
-        height: "var(--header-height)",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 20px",
-        paddingTop: "var(--safe-area-top)",
-        justifyContent: "space-between"
-      }}>
-        <h1 className="font-technical" style={{ fontSize: "1.2rem", color: accentColor }}>
-          LRC STATS MOBILE
-        </h1>
-        <button className="touch-active" onClick={toggleTheme} style={{ fontSize: "0.8rem", opacity: 0.8 }}>
-          {theme.toUpperCase()}
-        </button>
-      </header>
-
-      <main style={{ flex: 1, padding: "20px", overflowY: "auto" }}>
-        <div className="animate-in" style={{ padding: "20px", borderRadius: "var(--radius-lg)", background: "var(--bg-secondary)", border: "1px solid var(--border-color)" }}>
-          <h2 className="gradient-text" style={{ marginBottom: "10px" }}>
-            {t("dashboard.title")}
-          </h2>
-          <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>
-            {t("dashboard.subtitle")}
-          </p>
-        </div>
-
-        <div className="animate-in stagger-1" style={{ marginTop: "20px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px" }}>
-          <div className="glass" style={{ padding: "15px", borderRadius: "var(--radius-md)" }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>{t("dashboard.active_members")}</span>
-            <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>--</span>
-          </div>
-          <div className="glass" style={{ padding: "15px", borderRadius: "var(--radius-md)" }}>
-            <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", display: "block" }}>{t("dashboard.average_attendance")}</span>
-            <span style={{ fontSize: "1.5rem", fontWeight: "bold" }}>--</span>
-          </div>
-        </div>
-      </main>
-
-      <nav className="glass" style={{
-        height: "var(--nav-bar-height)",
-        display: "flex",
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingBottom: "var(--safe-area-bottom)",
-        borderTop: "1px solid var(--glass-border)"
-      }}>
-        <button className="touch-active" style={{ color: accentColor }}>{t("sidebar.dashboard")}</button>
-        <button className="touch-active" style={{ opacity: 0.5 }}>{t("sidebar.directory")}</button>
-        <button className="touch-active" style={{ opacity: 0.5 }}>{t("sidebar.activities")}</button>
-        <button className="touch-active" style={{ opacity: 0.5 }}>{t("sidebar.settings")}</button>
-      </nav>
-    </div>
+    <BaseLayout activeTab={activeTab} setActiveTab={handleTabChange}>
+      {renderContent()}
+    </BaseLayout>
   );
 }
 
