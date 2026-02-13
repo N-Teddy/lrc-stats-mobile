@@ -7,9 +7,10 @@ import { useTheme } from '../store/ThemeContext';
 interface PersonDetailModuleProps {
     personId: string;
     onBack: () => void;
+    onEdit: () => void;
 }
 
-const PersonDetailModule: React.FC<PersonDetailModuleProps> = ({ personId, onBack }) => {
+const PersonDetailModule: React.FC<PersonDetailModuleProps> = ({ personId, onBack, onEdit }) => {
     const { t } = useTranslation();
     const { accentColor } = useTheme();
     const [person, setPerson] = useState<Person | null>(null);
@@ -97,6 +98,24 @@ const PersonDetailModule: React.FC<PersonDetailModuleProps> = ({ personId, onBac
                     }}
                 >
                     <ArrowLeft size={20} />
+                </button>
+                <button
+                    onClick={onEdit}
+                    style={{
+                        position: 'absolute',
+                        top: 'calc(var(--safe-area-top) + 15px)',
+                        right: '20px',
+                        padding: '8px 15px',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        backdropFilter: 'blur(10px)',
+                        borderRadius: '20px',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        fontWeight: 'bold',
+                        zIndex: 10
+                    }}
+                >
+                    {t('common.edit').toUpperCase()}
                 </button>
 
                 <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>

@@ -6,9 +6,10 @@ import { useTheme } from '../store/ThemeContext';
 
 interface PeopleModuleProps {
     onViewPerson: (id: string) => void;
+    onAddPerson: () => void;
 }
 
-const PeopleModule: React.FC<PeopleModuleProps> = ({ onViewPerson }) => {
+const PeopleModule: React.FC<PeopleModuleProps> = ({ onViewPerson, onAddPerson }) => {
     const { t } = useTranslation();
     const { accentColor } = useTheme();
     const [rankings, setRankings] = useState<VitalityRanking[]>([]);
@@ -210,6 +211,7 @@ const PeopleModule: React.FC<PeopleModuleProps> = ({ onViewPerson }) => {
                     boxShadow: '0 10px 25px rgba(0,0,0,0.4)',
                     zIndex: 100
                 }}
+                onClick={onAddPerson}
             >
                 <UserPlus size={24} />
             </button>

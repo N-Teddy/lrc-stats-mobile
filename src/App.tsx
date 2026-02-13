@@ -6,13 +6,14 @@ import PersonDetailModule from "./modules/PersonDetailModule";
 import ActivitiesModule from "./modules/ActivitiesModule";
 import AttendanceModule from "./modules/AttendanceModule";
 import SettingsModule from "./modules/SettingsModule";
+import PersonForm from "./modules/PersonForm";
 import { notificationService } from "./store/notificationService";
 import { dataService } from "./store/dataService";
 import { syncService } from "./store/syncService";
 
 function App() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const [viewState, setViewState] = useState<{ type: 'list' | 'detail' | 'track' | 'analyze', id?: string, data?: any }>({ type: 'list' });
+  const [viewState, setViewState] = useState<{ type: 'list' | 'detail' | 'track' | 'analyze' | 'form', id?: string, data?: any }>({ type: 'list' });
 
   useEffect(() => {
     const initApp = async () => {
@@ -54,9 +55,29 @@ function App() {
         return <Dashboard />;
       case "people":
         if (viewState.type === 'detail' && viewState.id) {
-          return <PersonDetailModule personId={viewState.id} onBack={() => setViewState({ type: 'list' })} />;
+          return (
+            <PersonDetailModule
+              personId={viewState.id}
+              onBack={() => setViewState({ type: 'list' })}
+              onEdit={() => setViewState({ type: 'form', id: viewState.id })}
+            />
+          );
         }
-        return <PeopleModule onViewPerson={(id) => setViewState({ type: 'detail', id })} />;
+        if (viewState.type === 'form') {
+          return (
+            <PersonForm
+              personId={viewState.id}
+              onBack={() => setViewState({ type: viewState.id ? 'detail' : 'list', id: viewState.id })}
+              onSave={() => setViewState({ type: 'list' })}
+            />
+          );
+        }
+        return (
+          <PeopleModule
+            onViewPerson={(id) => setViewState({ type: 'detail', id })}
+            onAddPerson={() => setViewState({ type: 'form' })}
+          />
+        );
       case "activities":
         if (viewState.type === 'track') {
           return <AttendanceModule activity={viewState.data} onBack={() => setViewState({ type: 'list' })} />;

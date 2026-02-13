@@ -24,10 +24,10 @@
 - [x] **M3.1: People Directory**
     - [x] High-performance scrollable list with Vitality indicators.
     - [x] Spotlight search.
-- [ ] **M3.2: Person Detail View**
+- [x] **M3.2: Person Detail View**
     - [x] Edge-to-edge profile view.
     - [x] Performance Radar/Area charts.
-    - [ ] Mobile-native `PersonForm`.
+    - [x] Mobile-native `PersonForm`.
 
 ## 🕒 Phase 4: Activity & Attendance Tracking
 - [x] **M4.1: Activity Management**
