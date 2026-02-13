@@ -6,6 +6,7 @@ import PersonDetailModule from "./modules/PersonDetailModule";
 import ActivitiesModule from "./modules/ActivitiesModule";
 import AttendanceModule from "./modules/AttendanceModule";
 import SettingsModule from "./modules/SettingsModule";
+import IntelligenceModule from "./modules/IntelligenceModule";
 import PersonForm from "./modules/PersonForm";
 import { notificationService } from "./store/notificationService";
 import { dataService } from "./store/dataService";
@@ -87,6 +88,8 @@ function App() {
             onTrackAttendance={(activity) => setViewState({ type: 'track', data: activity })}
           />
         );
+      case "intelligence":
+        return <IntelligenceModule />;
       case "settings":
         return <SettingsModule />;
       default:

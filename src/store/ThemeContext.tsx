@@ -18,9 +18,10 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ACCENTS: Record<string, AccentData> = {
-    CYAN: { name: 'Neon Cyan', color: '#00d2ff', rgb: '0, 210, 255' },
-    GREEN: { name: 'Cyber Green', color: '#39ff14', rgb: '57, 255, 20' },
-    CRIMSON: { name: 'Industrial Crimson', color: '#ff4d4d', rgb: '255, 77, 77' }
+    CYAN: { name: 'Fluid Cyan', color: '#00D4FF', rgb: '0, 212, 255' },
+    PURPLE: { name: 'Liquid Purple', color: '#BB86FC', rgb: '187, 134, 252' },
+    GREEN: { name: 'Emerald Glow', color: '#00C853', rgb: '0, 200, 83' },
+    CRIMSON: { name: 'Warning Pulse', color: '#FF1744', rgb: '255, 23, 68' }
 };
 
 interface ThemeProviderProps {

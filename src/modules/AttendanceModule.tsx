@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Search, Check } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, Search, Check, ShieldCheck, Lock, Unlock, Users } from 'lucide-react';
 import { dataService, Person, AttendanceRecord } from '../store/dataService';
 import { notificationService } from '../store/notificationService';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../store/ThemeContext';
+import FluidCard from '../components/FluidCard';
 
 interface AttendanceModuleProps {
     activity: any;
@@ -46,7 +48,7 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
         setSelectedIds(newSelected);
 
         // Minor haptic feel
-        if (navigator.vibrate) navigator.vibrate(5);
+        if (navigator.vibrate) navigator.vibrate([5]);
     };
 
     const handleSave = async (shouldLock = false) => {
@@ -87,38 +89,43 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
     );
 
     return (
-        <div className="animate-in" style={{ paddingBottom: '100px' }}>
+        <div style={{ paddingBottom: '140px' }}>
             <div style={{
                 position: 'sticky',
                 top: 0,
                 zIndex: 100,
-                backgroundColor: 'rgba(5, 5, 5, 0.8)',
+                backgroundColor: 'rgba(11, 14, 20, 0.8)',
                 backdropFilter: 'blur(20px)',
                 padding: 'calc(var(--safe-area-top) + 15px) 20px 15px 20px',
-                borderBottom: '1px solid var(--glass-border)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
-                    <button onClick={onBack} style={{ color: 'var(--text-secondary)' }}>
-                        <ArrowLeft size={20} />
+                    <button onClick={onBack} className="glass-v2-inset touch-active" style={{ width: '40px', height: '40px', borderRadius: '12px' }}>
+                        <ArrowLeft size={18} />
                     </button>
                     <div style={{ flex: 1 }}>
-                        <h2 className="font-technical" style={{ fontSize: '1rem', fontWeight: 'bold' }}>{activity.name.toUpperCase()}</h2>
-                        <span style={{ fontSize: '0.65rem', color: isLocked ? 'var(--accent-crimson)' : accentColor, fontWeight: 'bold' }}>
-                            {isLocked ? 'FINALIZED' : 'RECORDING...'}
-                        </span>
+                        <h2 className="font-display" style={{ fontSize: '1.1rem', fontWeight: '900', color: 'white', letterSpacing: '-0.02em' }}>
+                            {activity.name.toUpperCase()}
+                        </h2>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: isLocked ? 'var(--accent-crimson)' : '#00C853', boxShadow: `0 0 10px ${isLocked ? 'var(--accent-crimson)' : '#00C853'}66` }} />
+                            <span style={{ fontSize: '0.6rem', color: isLocked ? 'var(--accent-crimson)' : 'var(--text-muted)', fontWeight: '900', letterSpacing: '0.5px' }}>
+                                {isLocked ? 'SESSION FINALIZED' : 'TRACKING LIVE'}
+                            </span>
+                        </div>
                     </div>
-                    <div className="glass" style={{ padding: '5px 15px', borderRadius: '15px', border: `1px solid ${accentColor}44` }}>
-                        <span style={{ fontSize: '1.2rem', fontWeight: '900', color: accentColor }}>{selectedIds.size}</span>
+                    <div className="glass-v2-inset" style={{ padding: '8px 15px', borderRadius: '12px', border: `1px solid ${accentColor}33`, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Users size={14} color={accentColor} />
+                        <span style={{ fontSize: '1.1rem', fontWeight: '900', color: accentColor, fontFamily: 'Space Grotesk' }}>{selectedIds.size}</span>
                     </div>
                 </div>
 
-                <div style={{
+                <div className="glass-v2-inset" style={{
                     display: 'flex',
                     alignItems: 'center',
-                    backgroundColor: 'var(--bg-tertiary)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
                     borderRadius: 'var(--radius-md)',
                     padding: '0 15px',
-                    border: '1px solid var(--border-color)'
+                    border: '1px solid var(--glass-border)'
                 }}>
                     <Search size={16} color="var(--text-muted)" />
                     <input
@@ -128,53 +135,64 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
                             flex: 1,
-                            padding: '10px',
+                            padding: '12px',
                             background: 'transparent',
                             border: 'none',
                             color: 'var(--text-primary)',
-                            fontSize: '0.9rem'
+                            fontSize: '0.85rem'
                         }}
                     />
                 </div>
             </div>
 
-            <div style={{ padding: '15px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {filtered.map(p => {
-                    const isSelected = selectedIds.has(p.id);
-                    return (
-                        <div
-                            key={p.id}
-                            className="glass touch-active"
-                            style={{
-                                padding: '12px 15px',
-                                borderRadius: 'var(--radius-md)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '15px',
-                                border: isSelected ? `1px solid ${accentColor}` : '1px solid var(--glass-border)',
-                                backgroundColor: isSelected ? `${accentColor}11` : 'transparent',
-                                opacity: isLocked && !isSelected ? 0.4 : 1
-                            }}
-                            onClick={() => togglePerson(p.id)}
-                        >
-                            <div style={{
-                                width: '36px',
-                                height: '36px',
-                                borderRadius: '18px',
-                                backgroundColor: 'var(--bg-tertiary)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
-                                <Check size={18} color={isSelected ? accentColor : 'transparent'} />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: isSelected ? accentColor : 'var(--text-primary)' }}>{p.name}</p>
-                                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{t(`directory.${p.status.toLowerCase()}`)}</span>
-                            </div>
-                        </div>
-                    );
-                })}
+            <div style={{ padding: '15px 20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <AnimatePresence>
+                    {filtered.map((p, i) => {
+                        const isSelected = selectedIds.has(p.id);
+                        return (
+                            <FluidCard
+                                key={p.id}
+                                padding="14px 18px"
+                                delay={i * 0.03}
+                                onClick={() => togglePerson(p.id)}
+                                accentColor={isSelected ? (isLocked ? 'var(--accent-crimson)' : accentColor) : 'transparent'}
+                                style={{
+                                    border: isSelected ? `1px solid ${isLocked ? 'var(--accent-crimson)' : accentColor}44` : '1px solid var(--glass-border)',
+                                    opacity: isLocked && !isSelected ? 0.4 : 1
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                    <div className="glass-v2-inset" style={{
+                                        width: '40px',
+                                        height: '40px',
+                                        borderRadius: '14px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        backgroundColor: isSelected ? `${isLocked ? 'var(--accent-crimson)' : accentColor}22` : 'rgba(255,255,255,0.03)',
+                                        border: isSelected ? `1px solid ${isLocked ? 'var(--accent-crimson)' : accentColor}33` : '1px solid var(--glass-border)',
+                                        transition: 'var(--transition-smooth)'
+                                    }}>
+                                        {isSelected ? (
+                                            <Check size={20} color={isLocked ? 'var(--accent-crimson)' : accentColor} strokeWidth={3} />
+                                        ) : (
+                                            <div style={{ width: '8px', height: '8px', borderRadius: '2px', border: '2px solid var(--text-muted)', opacity: 0.3 }} />
+                                        )}
+                                    </div>
+                                    <div style={{ flex: 1 }}>
+                                        <p style={{ fontSize: '0.9rem', fontWeight: '800', color: isSelected ? 'white' : 'var(--text-primary)', transition: 'color 0.2s' }}>{p.name}</p>
+                                        <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: '700', letterSpacing: '0.5px' }}>{t(`directory.${p.status.toLowerCase()}`).toUpperCase()}</span>
+                                    </div>
+                                    {p.isJRs && (
+                                        <div style={{ padding: '3px 8px', borderRadius: '6px', backgroundColor: 'rgba(0, 200, 83, 0.1)', color: '#00C853', fontSize: '0.5rem', fontWeight: '900' }}>
+                                            JRS
+                                        </div>
+                                    )}
+                                </div>
+                            </FluidCard>
+                        );
+                    })}
+                </AnimatePresence>
             </div>
 
             {!isLocked && (
@@ -183,32 +201,34 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    padding: '15px 20px calc(var(--safe-area-bottom) + 15px) 20px',
-                    backgroundColor: 'rgba(5, 5, 5, 0.9)',
-                    backdropFilter: 'blur(20px)',
+                    padding: '20px 25px calc(var(--safe-area-bottom) + 20px) 25px',
+                    backgroundColor: 'rgba(11, 14, 20, 0.9)',
+                    backdropFilter: 'blur(30px)',
                     borderTop: '1px solid var(--glass-border)',
                     display: 'flex',
-                    gap: '12px',
+                    gap: '15px',
                     zIndex: 1000
                 }}>
                     <button
-                        className="touch-active"
+                        className="glass-v2-inset touch-active"
                         onClick={() => handleSave(false)}
                         disabled={isSaving}
                         style={{
                             flex: 1,
-                            padding: '16px',
-                            borderRadius: 'var(--radius-md)',
-                            backgroundColor: 'var(--bg-tertiary)',
-                            border: '1px solid var(--border-color)',
+                            padding: '18px',
+                            borderRadius: '16px',
                             color: 'white',
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem'
+                            fontWeight: '900',
+                            fontSize: '0.75rem',
+                            letterSpacing: '1px',
+                            border: '1px solid var(--glass-border)'
                         }}
                     >
                         {t('attendance.save').toUpperCase()}
                     </button>
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         className="touch-active"
                         onClick={async () => {
                             const confirmed = await notificationService.confirm(
@@ -221,17 +241,24 @@ const AttendanceModule: React.FC<AttendanceModuleProps> = ({ activity, onBack })
                         }}
                         disabled={isSaving}
                         style={{
-                            flex: 1,
-                            padding: '16px',
-                            borderRadius: 'var(--radius-md)',
+                            flex: 1.5,
+                            padding: '18px',
+                            borderRadius: '16px',
                             backgroundColor: accentColor,
                             color: 'black',
-                            fontWeight: 'bold',
-                            fontSize: '0.9rem'
+                            fontWeight: '900',
+                            fontSize: '0.75rem',
+                            letterSpacing: '1px',
+                            boxShadow: `0 10px 25px ${accentColor}44`,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '10px'
                         }}
                     >
+                        <ShieldCheck size={18} />
                         {t('attendance.finalize').toUpperCase()}
-                    </button>
+                    </motion.button>
                 </div>
             )}
         </div>

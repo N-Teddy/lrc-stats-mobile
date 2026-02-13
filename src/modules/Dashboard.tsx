@@ -1,28 +1,41 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Users, Calendar, Activity, Zap, Clock, Cake, Gift } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Users, Calendar, Activity, Zap, Clock, Cake, Gift, Bell } from 'lucide-react';
 import { dataService, Person, Activity as ActivityType, AttendanceRecord } from '../store/dataService';
 import { useTheme } from '../store/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import FluidCard from '../components/FluidCard';
 import {
     AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
-const StatCard = ({ icon: Icon, label, value, color, subtext }: any) => (
-    <div className="glass" style={{ padding: '16px', borderRadius: 'var(--radius-lg)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{
-            position: 'absolute', top: '-10px', right: '-10px', width: '60px', height: '60px',
-            background: `radial-gradient(circle, rgba(${color}, 0.1) 0%, transparent 70%)`
-        }} />
-        <div style={{ position: 'relative', zIndex: 1 }}>
-            <div style={{ color: `rgb(${color})`, marginBottom: '8px' }}>
-                <Icon size={18} />
+const StatCard = ({ icon: Icon, label, value, color, delay }: any) => {
+    const { accentColor } = useTheme();
+    return (
+        <FluidCard
+            padding="16px"
+            delay={delay}
+            accentColor={color}
+            style={{ minHeight: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+        >
+            <div style={{ color: color || accentColor, opacity: 0.8, marginBottom: '12px' }}>
+                <Icon size={20} />
             </div>
-            <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 'bold' }}>{label}</p>
-            <p style={{ fontSize: '1.5rem', fontWeight: '900', marginTop: '2px' }}>{value}</p>
-            {subtext && <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', marginTop: '2px' }}>{subtext}</p>}
-        </div>
-    </div>
-);
+            <div>
+                <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: '800' }}>
+                    {label}
+                </p>
+                <motion.p
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                    style={{ fontSize: '1.8rem', fontWeight: '900', marginTop: '2px', fontFamily: 'Space Grotesk' }}
+                >
+                    {value}
+                </motion.p>
+            </div>
+        </FluidCard>
+    );
+};
 
 const Dashboard: React.FC = () => {
     const { accentColor, theme, toggleTheme } = useTheme();
@@ -66,7 +79,7 @@ const Dashboard: React.FC = () => {
         setStats({
             membres, eleves, jrs, total: activePeople.length,
             activitiesCount: activities.length, avgAttendance: avg,
-            recentAttendance: attendance.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(-5),
+            recentAttendance: attendance.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).slice(-7),
             birthdays: monthlyBirthdays,
             pendingAlerts
         });
@@ -81,51 +94,88 @@ const Dashboard: React.FC = () => {
     }, [stats.recentAttendance]);
 
     return (
-        <div className="animate-in" style={{ padding: '20px' }}>
+        <div style={{ padding: '0 20px 40px 20px', minHeight: '100%' }}>
+            {/* Immersive Header */}
             <header style={{
                 height: "var(--header-height)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                marginBottom: "20px",
+                marginBottom: "10px",
                 paddingTop: "var(--safe-area-top)"
             }}>
-                <h1 className="font-technical" style={{ fontSize: "1.2rem", color: accentColor }}>
-                    LRC STATS MOBILE
-                </h1>
-                <button className="touch-active" onClick={toggleTheme} style={{ fontSize: "0.8rem", opacity: 0.8 }}>
-                    {theme.toUpperCase()}
-                </button>
-            </header>
-
-            {stats.pendingAlerts.length > 0 && (
-                <div className="glass" style={{
-                    padding: '12px 16px',
-                    borderRadius: 'var(--radius-lg)',
-                    marginBottom: '20px',
-                    border: '1px solid var(--accent-crimson)',
-                    backgroundColor: 'rgba(255, 77, 77, 0.05)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px'
-                }}>
-                    <Clock size={16} color="var(--accent-crimson)" />
-                    <p style={{ fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 'bold' }}>
-                        {stats.pendingAlerts.length} {t('dashboard.pending_attendance_msg')}
+                <div>
+                    <h1 className="font-display" style={{ fontSize: "1.6rem", fontWeight: '900', color: 'white' }}>
+                        LRC <span style={{ color: accentColor }}>Stats</span>
+                    </h1>
+                    <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '700' }}>
+                        Intelligence Dashboard
                     </p>
                 </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className="glass-v2 touch-active" onClick={toggleTheme} style={{
+                        width: '40px', height: '40px', borderRadius: '12px', minWidth: '40px', fontSize: '0.7rem'
+                    }}>
+                        {theme === 'dark' ? 'DARK' : 'LIGHT'}
+                    </button>
+                    <div className="glass-v2" style={{
+                        width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Bell size={18} />
+                    </div>
+                </div>
+            </header>
+
+            {/* Critical Alert */}
+            {stats.pendingAlerts.length > 0 && (
+                <motion.div
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    className="glass-v2 touch-active"
+                    style={{
+                        padding: '16px',
+                        borderRadius: 'var(--radius-md)',
+                        marginBottom: '20px',
+                        border: '1px solid rgba(255, 23, 68, 0.2)',
+                        background: 'linear-gradient(90deg, rgba(255, 23, 68, 0.1) 0%, transparent 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px'
+                    }}
+                >
+                    <div style={{ padding: '8px', borderRadius: '10px', backgroundColor: 'rgba(255, 23, 68, 0.1)' }}>
+                        <Clock size={18} color="var(--accent-crimson)" />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: '700' }}>
+                            {stats.pendingAlerts.length} Pending Actions
+                        </p>
+                        <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>
+                            Attendance records require finalization
+                        </p>
+                    </div>
+                </motion.div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '20px' }}>
-                <StatCard icon={Users} label={t('directory.membres')} value={stats.membres} color="0, 210, 255" />
-                <StatCard icon={Zap} label={t('dashboard.jrs_group')} value={stats.jrs} color="57, 255, 20" />
-                <StatCard icon={Calendar} label={t('sidebar.activities')} value={stats.activitiesCount} color="0, 112, 243" />
-                <StatCard icon={Activity} label={t('dashboard.average')} value={stats.avgAttendance} color="255, 170, 0" />
+            {/* Quick Stats Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '25px' }}>
+                <StatCard icon={Users} label={t('directory.membres')} value={stats.membres} color="#00D4FF" delay={0.1} />
+                <StatCard icon={Zap} label={t('dashboard.jrs_group')} value={stats.jrs} color="#BB86FC" delay={0.2} />
+                <StatCard icon={Calendar} label={t('sidebar.activities')} value={stats.activitiesCount} color="#536DFE" delay={0.3} />
+                <StatCard icon={Activity} label={t('dashboard.average')} value={stats.avgAttendance} color="#00C853" delay={0.4} />
             </div>
 
-            <div className="glass" style={{ borderRadius: 'var(--radius-lg)', padding: '20px', marginBottom: '20px' }}>
-                <h3 className="font-technical" style={{ fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '15px' }}>{t('dashboard.engagement_title').toUpperCase()}</h3>
-                <div style={{ width: '100%', height: '160px' }}>
+            {/* Engagement Graph */}
+            <FluidCard padding="20px" marginBottom="25px" delay={0.5}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <h3 className="font-technical" style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '1px' }}>
+                        {t('dashboard.engagement_title').toUpperCase()}
+                    </h3>
+                    <div style={{ padding: '4px 10px', borderRadius: '10px', backgroundColor: 'rgba(0, 200, 83, 0.1)', color: '#00C853', fontSize: '0.6rem', fontWeight: '800' }}>
+                        ACTIVE FLOW
+                    </div>
+                </div>
+                <div style={{ width: '100%', height: '180px' }}>
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={chartData}>
                             <defs>
@@ -134,50 +184,78 @@ const Dashboard: React.FC = () => {
                                     <stop offset="95%" stopColor={accentColor} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 9 }} />
-                            <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--glass-border)', fontSize: '10px' }} />
-                            <Area type="monotone" dataKey="count" stroke={accentColor} strokeWidth={2} fill="url(#colorCount)" />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: '700' }} />
+                            <Tooltip
+                                contentStyle={{ backgroundColor: 'var(--bg-tertiary)', borderRadius: '12px', border: '1px solid var(--glass-border)', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}
+                                itemStyle={{ color: 'white', fontWeight: 'bold' }}
+                            />
+                            <Area
+                                type="monotone"
+                                dataKey="count"
+                                stroke={accentColor}
+                                strokeWidth={3}
+                                fill="url(#colorCount)"
+                                animationDuration={1500}
+                                animationBegin={600}
+                            />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-            </div>
+            </FluidCard>
 
-            <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-lg)', marginBottom: '20px' }}>
-                <h3 className="font-technical" style={{ fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '15px' }}>{t('dashboard.recent_activity_hub').toUpperCase()}</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {stats.recentAttendance.length > 0 ? stats.recentAttendance.slice(-3).reverse().map((act) => (
-                        <div key={act.activityId} style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--glass-border)' }}>
+            {/* Recent Intelligence Hub */}
+            <div style={{ marginBottom: '25px' }}>
+                <h3 className="font-technical" style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '1px', marginBottom: '15px', color: 'var(--text-muted)' }}>
+                    HISTORY LOG
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {stats.recentAttendance.length > 0 ? stats.recentAttendance.slice(-4).reverse().map((act, i) => (
+                        <FluidCard key={act.activityId} padding="15px" delay={0.6 + (i * 0.1)} style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <div className="glass-v2-inset" style={{ width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Clock size={18} color="var(--text-muted)" />
+                            </div>
                             <div style={{ flex: 1 }}>
-                                <p style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>{act.activityName}</p>
+                                <p style={{ fontSize: '0.85rem', fontWeight: '800' }}>{act.activityName}</p>
                                 <p style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>{act.date}</p>
                             </div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: accentColor }}>{act.count}</span>
-                        </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <p style={{ fontSize: '1.1rem', fontWeight: '900', color: accentColor }}>{act.count}</p>
+                                <p style={{ fontSize: '0.5rem', fontWeight: '800', color: 'var(--text-muted)' }}>PRESENCE</p>
+                            </div>
+                        </FluidCard>
                     )) : <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{t('dashboard.no_activities')}</p>}
                 </div>
             </div>
 
-            <div className="glass" style={{ padding: '20px', borderRadius: 'var(--radius-lg)', background: 'linear-gradient(135deg, rgba(255, 170, 0, 0.05) 0%, transparent 100%)', border: '1px solid rgba(255, 170, 0, 0.1)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <h3 className="font-technical" style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#ffaa00' }}>{t('dashboard.birthday_watch').toUpperCase()}</h3>
-                    <Cake size={14} color="#ffaa00" />
+            {/* Birthday Radar */}
+            <FluidCard padding="20px" delay={1} className="gradient-mesh" style={{ border: 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px', position: 'relative', zIndex: 2 }}>
+                    <h3 className="font-technical" style={{ fontSize: '0.75rem', fontWeight: '900', letterSpacing: '1px', color: 'white' }}>
+                        {t('dashboard.birthday_watch').toUpperCase()}
+                    </h3>
+                    <Cake size={18} color="#FFD54F" />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {stats.birthdays.slice(0, 3).map((p) => (
-                        <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <Gift size={14} color="var(--text-muted)" />
+                <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '10px', position: 'relative', zIndex: 2 }}>
+                    {stats.birthdays.length > 0 ? stats.birthdays.map((p) => (
+                        <div key={p.id} style={{ minWidth: '100px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                            <div className="glass-v2" style={{ width: '50px', height: '50px', borderRadius: '50%', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.2)' }}>
+                                {p.image ? (
+                                    <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+                                        <Users size={20} color="white" />
+                                    </div>
+                                )}
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <p style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>{p.name}</p>
-                                <p style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>{p.dob?.substring(5)}</p>
+                            <div style={{ textAlign: 'center' }}>
+                                <p style={{ fontSize: '0.7rem', fontWeight: '800', whiteSpace: 'nowrap' }}>{p.name.split(' ')[0]}</p>
+                                <p style={{ fontSize: '0.55rem', color: 'rgba(255,255,255,0.6)' }}>{p.dob?.substring(5)}</p>
                             </div>
                         </div>
-                    ))}
-                    {stats.birthdays.length === 0 && <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>No celebrations this month.</p>}
+                    )) : <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)' }}>No celebrations this month.</p>}
                 </div>
-            </div>
+            </FluidCard>
         </div>
     );
 };
