@@ -42,7 +42,7 @@ jobs:
         id: setup-android
 
       - name: build tauri android
-        run: pnpm tauri android build --release
+        run: pnpm tauri android build
         env:
           NDK_HOME: ${{ steps.setup-android.outputs.ndk-path }}
 
@@ -51,8 +51,8 @@ jobs:
         with:
           name: android-release
           path: |
-            src-tauri/gen/android/app/build/outputs/apk/release/*.apk
-            src-tauri/gen/android/app/build/outputs/bundle/release/*.aab
+            src-tauri/gen/android/app/build/outputs/**/*.apk
+            src-tauri/gen/android/app/build/outputs/**/*.aab
 
   build-ios:
     runs-on: macos-latest
